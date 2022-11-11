@@ -7,22 +7,59 @@ namespace TicTacToePart2
     {
         public static void Main(string[] args)
         {
-            // Create the board and pieces
-            int BOARDSIZE = 3;
-            char[,] gameBoard = CreateBoard(BOARDSIZE);
-            char player1Piece = 'X', player2Piece = 'O', currentPiece = ' ';
+            // Play the game at least once!
+            string userStatus = "";
+            do
+            {
+                Console.Clear();
 
-            // Create a turn variable and obtain the number of elements in my board
-            int playerTurn = 0, avaliableSpaces = BOARDSIZE * BOARDSIZE;
+                // Create the board and pieces
+                int BOARDSIZE = GetBoardSize();
+                char[,] gameBoard = CreateBoard(BOARDSIZE);
+                char player1Piece = 'X', player2Piece = 'O', currentPiece = ' ';
 
-            PlayGame(BOARDSIZE, gameBoard, player1Piece, player2Piece, currentPiece, avaliableSpaces, playerTurn);
-            
+                // Create a turn variable and obtain the number of elements in my board
+                int playerTurn = 0, avaliableSpaces = BOARDSIZE * BOARDSIZE;
+
+                PlayGame(BOARDSIZE, gameBoard, player1Piece, player2Piece, currentPiece, avaliableSpaces, playerTurn);
+
+                // Check on the user after the game!
+                Console.Write("Do you want to play again?: ");
+                userStatus = Console.ReadLine();
+
+            } while (userStatus != "exit" && userStatus != "Exit");
+
+            Console.Write("Thank you for playing!");    // Message after the game!
         }
 
-        /// <summary>
-        /// Create and Print Out Initial Board Status
-        /// </summary>
-        /// <param name="board"></Create a 2D array of the user's specified choice>
+        // Prompt user for size
+        public static int GetBoardSize()
+        {
+            // Prepare my response variable
+            string usersSize = "";
+            bool isNum = false;
+            while (!isNum) // Keep asking until the user enters a valid number!
+            {
+                Console.Write("Enter a size: ");
+                usersSize = Console.ReadLine();
+
+                // Is it a number?
+                isNum = int.TryParse(usersSize, out int size);
+                if (!isNum)
+                {
+                    // Keep the error message until the return key is pressed
+                    Console.WriteLine($"{usersSize} is not a valid boardsize. Please Try Again!");
+                    Console.ReadLine();
+                }
+
+                Console.Clear();
+            }
+
+            return int.Parse(usersSize);    // Returns a number because we break out of the loop!
+
+        }
+
+        // Print, obtain board status
         public static void PrintBoard(char[,] board)
         {
            for(int row = 0; row < board.GetLength(0); row++)
@@ -199,7 +236,7 @@ namespace TicTacToePart2
 
                 // Prompt the user
                 Console.WriteLine("\n\n" + message);
-                Console.Write("Enter a row and column(1-3): ");
+                Console.Write($"Enter a row and column({1} - {size}): ");
                 string[] input = Console.ReadLine().Split(' ');
 
                 Console.Clear();
@@ -220,6 +257,7 @@ namespace TicTacToePart2
                     Console.WriteLine($"Row {row}, Column {column} is taken!");
                     continue;
                 }
+
                 // Indicate one less piece, check for all possible win combinations!
                 spaces--;
                 turn++;
@@ -236,6 +274,10 @@ namespace TicTacToePart2
             }
             else
                 Console.WriteLine("\n\nDraw!");
+
+            // Keep the state until the return key is pressed
+            Console.ReadLine(); 
+            Console.Clear();
 
         }
 
