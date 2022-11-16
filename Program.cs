@@ -116,7 +116,7 @@ namespace TicTacToePart2
                 if (isNum)
                 {
                     // Check if each piece of data is in bounds
-                    if (data > 0 && data <= 3)
+                    if (data > 0 && data <= size)
                         numOfvalidations++;
                 }
                     
