@@ -1,0 +1,263 @@
+﻿Part 1:
+
+The first thing I plan to do is create my basic setup. First, I created
+a 2D array that will represent the tic-tac-toe board inside of my program.
+Initially, the board will have all empty spaces. The idea is that we could create
+two separate functions: one that will create the 2D array with the empty spaces and
+then pass that created 2D array as a parameter to then print out the board itself as
+we play the game.
+With the board, we want to incorporate the horizontal and vertical dividers
+where appropriate.
+    * Logic:
+        For every row:
+            * For every column: Append a space, place the current piece, add the divider(not going to be the case for the last col)
+            * After going through each column: Move to the next line, place the horizontal divider, move to the next line
+                * Horizontal divider: Only applied if I am not on the last row. The length of the divider will depend on the size of
+                  the board itself. If we think about a pattern, I focused on each spot. I incorporated a "space, piece, space, divider" pattern
+                  and I noticed by separating the region, we always have 3 dashes below it. 
+
+                    For example:
+                     '' |
+                     ----
+
+
+                    This is always the case except for the last column because I do not have the divider. To cover that, I created a function that
+                    will return the appropriate divider based on the size of the board(in our example 3). Because I have those 3 dashes, and this
+                    occurs 3 times, I did (3 * 3). This gets me 9 then subtracting one gets me the 8. For 8 times, I then added the dash one-by-one until
+                    I reach 8, then I return the divider which will then be called as long as I'm not on the last row.
+
+
+        The idea:
+
+                     '' |'' |''
+                     ----------
+                     '' |'' |''
+                     ----------
+                     '' |'' |''
+  
+For the aesthetics, I went ahead and created variables for each of the player's pieces,
+a turn variable to properly alternate between player 1 and player 2, and I
+created a variable that will store the number of elements that are inside the board.
+
+After the setup, we want to play the game under two conditions,
+as long the board is not full and if there are no winning moves inside
+of my program. This is a great candidate for a do, while loop. For now, we'll consider the board itself.
+
+    Step 1: We want to create a function that will draw the game board
+inside of my program: incorporated in our game loop
+    Step 2: Using our turn variable, we want to be able to differentiate
+between player 1 and player 2.(More on that later)
+        * We can use the turn variable to take our current
+    value of our turn variable, and use the modulus operator. The purpose of
+    the modulus operator will be that the value of the turn variable will
+    be either 0 or 1.
+        * Player 1's turn: the resulting variable will be 0
+        * Player 2's turn: the resulting variable will be 1
+
+    Step 3: Afterwards, a message will be printed out. Based on the condition, it
+will serve to indicate if it's player 1's turn or player 2's turn based on the value.
+Then, we'll store the appropriate response inside of a message variable which will be printed
+out
+
+    Step 4: Prompt the user for the row and the column. We prompt for both
+pieces of information together, and then we can take each piece of information and
+store it inside of a list. The key would be to split the input into two parts. The format
+of each input will look something like this..
+
+rowNum colNum
+input = {rowNum, colNum}
+
+    Step 5: Validating the information
+    The goal is to prompt the user for a row and a column number upfront. This will all be stored
+inside of a list in which the string will be subdivided into two parts: the row and column. Afterwards,
+we want to go through their row and column input and validate that their inputs are numbers.
+
+    Simply, we can create a method to validate the user input. This method will return
+a true or a false value based on the number of validated pieces I have. This will serve as a conditional
+statement that will be evaluated.
+
+    For our purposes, we only want to consider and check if the user's location is
+not valid(that is, one or more pieces of information are not numbers). We also want to consider that
+the positions, if they're not strings, they must be in bounds of my board. For our purposes, we want
+to check if the row and the column is between 1 and 3. If it is, then we want to indicate that information.
+Since we want both the row and column validated, we are looking for both pieces of information.
+If that is not the case, we want to throw an error message! 
+
+    Step 6: Validate the location!
+
+    Intially, we can store the user's location inside of two separate variables. Before moving on, we need to
+consider the game board itself. Since the game board is a 0 based multidimensional array, we'll have to
+decrement the row and column arguments by 1. After that, we then want to test for validity. The goal would be to take
+the array, and reference the gameboard to check if the user's specified location is valid.
+
+    * If the location is valid: Place the piece on the board
+
+        * Consider a switch statement
+            * If the space is empty
+                1. Assign the user's piece to their specified location
+                    substep: decrement my row and column by 1 to avoid an index error
+                2. Decrement the number of avaliable spaces
+
+            * Default: The user's specified position is already taken
+                1. Write an error message!
+                2. Prompt the user again!
+
+
+Part 2: Play the Game
+
+    Step 1: Alternate between player 1 and 2. Notice that we have a playerTurn variable
+that allows for us to not only print the desired message, but we can work with the appropriate
+piece. After the player goes(location was prompted, checked if their location was between
+1 and 3, and then we checked that spot for an empty piece). If all that is successful, increment the
+value
+
+    Major Step: All the possible winning combinations. The player can win horizontally, vertically
+or diagonally. In total, there are 8 possible winning combinations. 
+
+We want 3 successful locations. The easiest way for me would be to store the information inside of
+a list. The list will represent the user's potential winning move. The idea is that if we have a piece, then we can
+append the piece. After each row, we want to check if the number of consecutive pieces is equivalent
+to the size of the board. If so, we break out of the statement and return true. Otherwise, clear the list, reset
+the process.
+
+    * Horizontally:
+        * For every row, we need to check every column.
+
+            check -> check -> check
+
+
+    * Vertically
+        1. The same idea as the horizontal wins, except I am moving down each column
+        2. Apply the exact same logic as before
+            For every column, check every row
+
+            Idea: check
+                    |
+                  check
+                    |
+                  check
+
+       3. The same ending logic will apply
+        
+
+    * Diagonally
+        1. We only have two possible winning combinations. They are diagramed below
+              1      2     3
+          1              piece
+          2        piece
+          3 piece
+
+               1     2      3
+         1   piece
+         2        piece
+         3               piece
+            
+        2. Subdivide these two possibilities into separate functions.
+            * Upward slope
+            * Negative slope
+
+        In these cases, both directions are actually easy to check. We want the piece in all
+3 slots. If the piece is not in one of these slots, we can automatically say that
+there's no diagonal win 
+
+        3. Negative Slope: Perhaps the easiest thing we can check. Notice that
+the row and the column numbers are the same, and because they're identical, this makes it easier to
+check. We can run only one loop and exit early when the opposing piece is not in at a position.
+
+        4. Positive Slope: This is harder because our row and column numbers will not always be
+identical. However, if we think about some patterns..
+
+      Start -> (2, 0), (1, 1), (0, 2) <- End
+         * Increment my column count, decrement my row count
+         * Path: Top right corner - Bottom Left Corner
+      Start -> (0, 2), (1, 1), (2, 0) <- End
+         * Increment my row count, decrement my column count
+         * Path: Bottom Left Corner - Top Right Corner
+
+        I opted for the top approach. We still plan to run just one loop, but we need to take
+into consideration of decrementing the row count. The way we can do that is by using our size
+and our indexing variable. Here's an outline of the plan itself
+
+        Plan:
+            size = 3, i = 0, next row: 2
+            size = 3, i = 1, next row: 1
+            size = 3, i = 2, next row: 0
+            
+
+    Since we start at column 0, we right way need to address how to avoid
+an index error with our row index. We can instead think about it like this. I want to pick
+up the last row I left off of, then move down 1 to go to the next row. It would look like
+this.
+
+    Plan:
+        (3 - 0) - 1: Last row: 3, New row: 2
+        (3 - 1) - 1: Last row: 2, New row: 1
+        (3 - 2) - 1: Last row: 1, New row: 0
+
+
+Because we want to check every winning combination, we want to create a function that stores
+each possible win. Then, all that's left is inside my function, we check for those 3 possible
+winning combinations together. If I have either a horizontal, vertical, or diagonal win, then
+we can break out the game loop and return a win!
+
+To summarize, we break out of the game if either of the following happens..
+    1. Full Board
+    2. Winning Move
+
+For our purposes, because we are continously doing something until one or both conditions are false,
+we can incorporate a do while loop. That way, I have the appropriate information and logic required in
+order to check my conditions at the end of the code's execution
+
+Final Part: The Endgame
+
+To recap, we continue to play the game if I don't have a full board or if there are no winning moves.
+
+    Here are the possible scenarios
+
+        1. Either I have a full board and no winning move
+        2. Full board, but a winning move
+        3. Winning Move, but an incomplete board
+
+At the end of the loop, we want to check for those three scenarios as they're not explicitly encountered after
+termination of the game.
+
+The key is that we can use conditionals to check for each of the three possibilities. They're outlined below
+
+    if(avaliableSpaces != 0 && WinningMove)
+        return a win to the appropriate player
+
+    else if(valiableSpaces == 0 && WinningMove)
+        return a win
+        
+    else if (avaliableSpaces == 0 && !WinningMove)
+        return a draw
+
+
+After this, the last thing under consideration is who wins? The way I thought about it is by understanding the last piece
+that was dropped. More simply, did player 1's piece terminated the game or did player 2's piece terminate the game? Using this,
+we can create a winning message with this in mind by comparing the piece. We do so with a ternary operator, and we check if the
+last piece we worked is equivalent to either player 1 or player 2's piece.
+
+Visual idea:
+
+    currentPiece == 'X' (or 'O'; either one or the other)
+        True: Player 1 wins!
+        False: Player 2 wins!
+
+Ending Note: After figuring out the game logic, we can take everything into account, and copy and paste it
+inside of a function responsible for playing the game. We need to pass in the following pieces of information
+
+    * GameBoard : Board
+    * Player 1's piece  : 'X'
+    * Player 2's piece  : 'O'
+    * Current Piece : ' '; change dependent on whether it's player 1 or 2's turn
+    * avaliableSpaces : Number of spots to fill, play the game as long as it's not zero 
+    * playerTurn : Switching variable for alternating the turns
+
+
+
+
+
+
+
+    
