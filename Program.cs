@@ -160,20 +160,20 @@ namespace TicTacToePart2
         }
 
         // Check horizontal wins!
-        public static bool HorizontalWin(char[,] board, char piece, int size)
+        public static bool HorizontalWin(char[,] board, char piece)
         {
             // Create a tracking list to count for consecutive pieces
-            List<char> consecutivePieces = new List<char>();
+            int consecutivePieces = 0;
             for (int i = 0; i < board.GetLength(0); i++)
             {
                 // Go through every spot in my row
                 for (int j = 0; j < board.GetLength(1); j++)
                 {   
                     if (board[i, j] == piece)
-                    consecutivePieces.Add(piece);
+                        consecutivePieces++;
                 }
                 // Do I have 3 of a kind?
-                if (consecutivePieces.Count == size)
+                if (consecutivePieces == 3)
                     return true;
 
                 // Clear, reset for the next row
@@ -184,48 +184,55 @@ namespace TicTacToePart2
         }
 
         // Check Vertical wins! Down through each column
-        public static bool VerticalWin(char[,] board, char piece, int size)
+        public static bool VerticalWin(char[,] board, char piece)
         {
             // Create a tracking list to count for consecutive pieces
-            List<char> consecutivePieces = new List<char>();
+            int consecutivePieces = 0;
             for (int j = 0; j < board.GetLength(1); j++)
             {
                 for (int i = 0; i < board.GetLength(0); i++)
                 {
                     if (board[i, j] == piece)
-                        consecutivePieces.Add(piece);
+                        consecutivePieces++;
                 }
-                if (consecutivePieces.Count == size)
+                if (consecutivePieces == 3)
                     return true;
-                // Clear, prepare for the next column
+                
                 consecutivePieces.Clear();
             }
-
             return false;
         }
 
         public static bool negativelySlopedWin(char[,] board, char piece, int size)
         {
+            int consecutivePieces = 0;
             for (int i = 0; i < size; i++)
             {
                 // Exit early for any opposing piece
                 if (board[i, i] != piece)
                     return false;
+                
+                consecutivePieces++
+                if(consecutivePieces == 3)
+                    break;
             }
-            // By default
             return true;
         }
 
         public static bool positivelySlopedWin(char[,] board, char piece, int size)
         {
+            int consecutivePieces = 0;
             // Increment column, decrement row
             for (int i = 0; i < size; i++)
             {
                 // Check for early exit
                 if (board[(size - i) - 1, i] != piece)
                     return false;
+                
+                consecutivePieces++
+                if(consecutivePieces == 3)
+                    break;   
             }
-            // Default!
             return true;
 
         }
@@ -237,7 +244,7 @@ namespace TicTacToePart2
         // Check All Possible Wins!
         public static bool WinningMove(char[,] board, char piece, int size)
         {
-            return HorizontalWin(board, piece, size) || VerticalWin(board, piece, size) || DiagonalWin(board, piece, size);
+            return HorizontalWin(board, piece) || VerticalWin(board, piece) || DiagonalWin(board, piece, size);
         }
 
         // Entire Game Logic
