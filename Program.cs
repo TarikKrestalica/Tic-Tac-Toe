@@ -33,29 +33,27 @@ namespace TicTacToePart2
         }
 
         // Prompt user for size
-        public static int GetBoardSize()
+        public static int GetBoardSize(bool isNum = false, int size = 0)
         {
             // Prepare my response variable
             string usersSize = "";
-            bool isNum = false;
-            while (!isNum) // Keep asking until the user enters a valid number!
+            while (!isNum || size < 3) // Keep asking until the user enters a valid number!
             {
-                Console.Write("Enter a size: ");
+                Console.Write("Enter a size(3 or greater): ");
                 usersSize = Console.ReadLine();
 
                 // Is it a number?
-                isNum = int.TryParse(usersSize, out int size);
+                isNum = int.TryParse(usersSize, out size);
                 if (!isNum)
-                {
-                    // Keep the error message until the return key is pressed
                     Console.WriteLine($"{usersSize} is not a valid boardsize. Please Try Again!");
-                    Console.ReadLine();
-                }
-
+                else if(size < 3)
+                    Console.WriteLine($"{size} is not 3 or greater. Please Try Again");
+                
+                Console.ReadLine();
                 Console.Clear();
             }
 
-            return int.Parse(usersSize);    // Returns a number because we break out of the loop!
+            return size;  
 
         }
 
@@ -66,13 +64,11 @@ namespace TicTacToePart2
             {
                 for (int col = 0; col < board.GetLength(1); col++)
                 {
-                    // For every row: Leave a space, place the empty piece, space, then the divider(only if I'm not on the last column)
                     if (col < board.GetLength(1) - 1)
                         Console.Write(" " + board[row, col] + " |");
                     else
                         Console.Write(" " + board[row, col]);
                 }
-                // Place the horizontal divider where appropriate, need to obtain the number of rows
                 if (row < board.GetLength(0) - 1)
                     Console.WriteLine("\n" + CreateHorizontalDivider(board.GetLength(0)));
             }
@@ -108,7 +104,6 @@ namespace TicTacToePart2
         // Check and validate the input! No text and in bounds!
         public static bool InputIsValidated(string[] info, int size)
         {
-            // Early exit
             if (info.Length != 2)
                 return false;
 
@@ -116,7 +111,6 @@ namespace TicTacToePart2
             foreach (string piece in info)
             {
                 bool isNum = int.TryParse(piece, out int data);
-                // Exit early if the current piece is not a number!
                 if (!isNum)
                     return false;
 
@@ -125,14 +119,12 @@ namespace TicTacToePart2
                     return false;
 
             }
-            // Do I have a row number and a column number?
             return true;
         }
 
         // If invalid input, display the error
         public static void DisplayFormatError(string[] input)
         {
-            // Display error message, user's invalid input
             Console.WriteLine("Invalid Prompt!");
             Console.Write("Your Input:");
             foreach (string prompt in input)
@@ -142,37 +134,29 @@ namespace TicTacToePart2
 
         }
     
-
-        // Check for valid location
         public static bool ValidatedLocation(char[,] board, int row, int column, char currentPiece)
         {
             // Reference my board at the specified position: Open Space or occupied?
             switch (board[row - 1, column - 1])
             {
-                // Empty space
                 case ' ':
                     board[row - 1, column - 1] = currentPiece;
                     return true;
-                // X or an O
                 default:
                     return false;
             }
         }
 
-        // Check horizontal wins!
         public static bool HorizontalWin(char[,] board, char piece)
         {
-            // Create a tracking list to count for consecutive pieces
             int consecutivePieces = 0;
             for (int i = 0; i < board.GetLength(0); i++)
             {
-                // Go through every spot in my row
                 for (int j = 0; j < board.GetLength(1); j++)
                 {   
                     if (board[i, j] == piece)
                         consecutivePieces++;
                 }
-                // Do I have 3 of a kind?
                 if (consecutivePieces == 3)
                     return true;
 
@@ -183,10 +167,8 @@ namespace TicTacToePart2
             return false;
         }
 
-        // Check Vertical wins! Down through each column
         public static bool VerticalWin(char[,] board, char piece)
         {
-            // Create a tracking list to count for consecutive pieces
             int consecutivePieces = 0;
             for (int j = 0; j < board.GetLength(1); j++)
             {
@@ -236,12 +218,12 @@ namespace TicTacToePart2
             return true;
 
         }
-        // Account for positive and negative sloped wins above!
+
         public static bool DiagonalWin(char[,] board, char piece, int size)
         {
             return negativelySlopedWin(board, piece, size) || positivelySlopedWin(board, piece, size);
         }
-        // Check All Possible Wins!
+        
         public static bool WinningMove(char[,] board, char piece, int size)
         {
             return HorizontalWin(board, piece) || VerticalWin(board, piece) || DiagonalWin(board, piece, size);
@@ -253,11 +235,9 @@ namespace TicTacToePart2
             // Game Loop
             do
             {
-                // Print board state, prepare the piece
                 PrintBoard(board);
                 workingPiece = turn % 2 == 0 ? player1 : player2;
 
-                // Turn message, prompt user
                 string message = workingPiece == player1? "Player 1's turn!" : "Player 2's turn!";
                 Console.WriteLine("\n\n" + message);
                 Console.Write($"Enter a row and column({1} - {size}): ");
@@ -268,7 +248,6 @@ namespace TicTacToePart2
                 // Reset if I have invalid input
                 if (!InputIsValidated(userInput, size))
                 {
-                    // Either 2 inputs or not
                     if(userInput.Length == 2)
                         Console.WriteLine($"Invalid Location: Row {userInput[0]}, Column {userInput[1]}");
                     else
@@ -293,7 +272,6 @@ namespace TicTacToePart2
 
             } while (spaces > 0 && !WinningMove(board, workingPiece, size));
 
-            // Endgame: Print out final board state, check for either a win or a draw
             PrintBoard(board);
             if (spaces >= 0 && WinningMove(board, workingPiece, size))
             {
@@ -303,7 +281,6 @@ namespace TicTacToePart2
             else
                 Console.WriteLine("\n\nDraw!");
 
-            // Keep the state until the return key is pressed
             Console.ReadLine();
             Console.Clear();
 
